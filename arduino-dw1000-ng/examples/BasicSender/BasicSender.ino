@@ -49,15 +49,25 @@
 
 #include <DW1000Ng.hpp>
 
-#if defined(ESP8266)
-//const uint8_t PIN_RST = 5; // reset pin
-//const uint8_t PIN_IRQ = 4; // irq pin
-const uint8_t PIN_SS = 15; // spi select pin
-#else
-//const uint8_t PIN_RST = 9; // reset pin
-//const uint8_t PIN_IRQ = 2; // irq pin
-const uint8_t PIN_SS = SS; // spi select pin
-#endif
+
+const uint8_t PIN_RST = 15; // reset pin
+const uint8_t PIN_IRQ = 17; // irq pin
+const uint8_t PIN_SS = 2; // spi select pin
+const uint8_t PIN_SCK = 18;
+const uint8_t PIN_MOSI = 23;
+const uint8_t PIN_MISO=19;
+// #if defined(ESP8266)
+// //const uint8_t PIN_RST = 5; // reset pin
+// //const uint8_t PIN_IRQ = 4; // irq pin
+// const uint8_t PIN_SS = 15; // spi select pin
+// #else
+// const uint8_t PIN_RST = 15; // reset pin
+// const uint8_t PIN_IRQ = 17; // irq pin
+// const uint8_t PIN_SS = 2; // spi select pin
+// const uint8_t PIN_SCK = 18;
+// const uint8_t PIN_MOSI = 23;
+// const uint8_t PIN_MISO=19;
+// #endif
 
 // DEBUG packet sent status and count
 volatile unsigned long delaySent = 0;
@@ -79,7 +89,7 @@ device_configuration_t DEFAULT_CONFIG = {
 
 void setup() {
   // DEBUG monitoring
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println(F("### DW1000Ng-arduino-sender-test ###"));
   // initialize the driver
   DW1000Ng::initializeNoInterrupt(PIN_SS);
