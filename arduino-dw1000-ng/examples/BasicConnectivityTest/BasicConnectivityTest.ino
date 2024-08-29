@@ -50,16 +50,22 @@
 #include <DW1000Ng.hpp>
 
 // connection pins
-#if defined(ESP8266)
-const uint8_t PIN_RST = 5; // reset pin
-const uint8_t PIN_IRQ = 4; // irq pin
-const uint8_t PIN_SS = 15; // spi select pin
-#else
-const uint8_t PIN_RST = 9; // reset pin
-const uint8_t PIN_IRQ = 2; // irq pin
-const uint8_t PIN_SS = SS; // spi select pin
-#endif
+// #if defined(ESP8266)
+// const uint8_t PIN_RST = 5; // reset pin
+// const uint8_t PIN_IRQ = 4; // irq pin
+// const uint8_t PIN_SS = 15; // spi select pin
+// #else
+// const uint8_t PIN_RST = 9; // reset pin
+// const uint8_t PIN_IRQ = 2; // irq pin
+// const uint8_t PIN_SS = SS; // spi select pin
+// #endif
 
+const uint8_t PIN_RST = 15; // reset pin
+const uint8_t PIN_IRQ = 17; // irq pin
+const uint8_t PIN_SS = 2; // spi select pin
+const uint8_t PIN_SCK = 18;
+const uint8_t PIN_MOSI = 23;
+const uint8_t PIN_MISO=19;
 
 void setup() {
   // DEBUG monitoring

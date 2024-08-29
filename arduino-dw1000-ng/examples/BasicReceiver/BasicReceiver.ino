@@ -52,10 +52,10 @@
 
 const uint8_t PIN_RST = 15; // reset pin
 const uint8_t PIN_IRQ = 17; // irq pin
-const uint8_t PIN_SS = 2; // spi select pin
+const uint8_t PIN_SS = 4; // spi select pin
 const uint8_t PIN_SCK = 18;
 const uint8_t PIN_MOSI = 23;
-const uint8_t PIN_MISO=19;
+const uint8_t PIN_MISO = 19;
 // #if defined(ESP8266)
 // //const uint8_t PIN_RST = 5; // reset pin
 // //const uint8_t PIN_IRQ = 4; // irq pin
