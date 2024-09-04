@@ -134,41 +134,42 @@ void loop() {
         size_t recv_len = DW1000Ng::getReceivedDataLength();
         byte recv_data[recv_len];
         DW1000Ng::getReceivedData(recv_data, recv_len);
+        Serial.println(recv_data[0]);
 
 
-        if(recv_data[0] == BLINK) {
-            DW1000NgRTLS::transmitRangingInitiation(&recv_data[2], tag_shortAddress);
-            DW1000NgRTLS::waitForTransmission();
+        // if(recv_data[0] == BLINK) {
+        //     DW1000NgRTLS::transmitRangingInitiation(&recv_data[2], tag_shortAddress);
+        //     DW1000NgRTLS::waitForTransmission();
 
-            RangeAcceptResult result = DW1000NgRTLS::anchorRangeAccept(NextActivity::RANGING_CONFIRM, next_anchor);
-            if(!result.success) return;
-            range_self = result.range;
+        //     RangeAcceptResult result = DW1000NgRTLS::anchorRangeAccept(NextActivity::RANGING_CONFIRM, next_anchor);
+        //     if(!result.success) return;
+        //     range_self = result.range;
 
-            String rangeString = "Range: "; rangeString += range_self; rangeString += " m";
-            rangeString += "\t RX power: "; rangeString += DW1000Ng::getReceivePower(); rangeString += " dBm";
-            Serial.println(rangeString);
+        //     String rangeString = "Range: "; rangeString += range_self; rangeString += " m";
+        //     rangeString += "\t RX power: "; rangeString += DW1000Ng::getReceivePower(); rangeString += " dBm";
+        //     Serial.println(rangeString);
 
-        } else if(recv_data[9] == 0x60) {
-            double range = static_cast<double>(DW1000NgUtils::bytesAsValue(&recv_data[10],2) / 1000.0);
-            String rangeReportString = "Range from: "; rangeReportString += recv_data[7];
-            rangeReportString += " = "; rangeReportString += range;
-            Serial.println(rangeReportString);
-            if(received_B == false && recv_data[7] == anchor_b[0] && recv_data[8] == anchor_b[1]) {
-                range_B = range;
-                received_B = true;
-            } else if(received_B == true && recv_data[7] == anchor_c[0] && recv_data[8] == anchor_c[1]){
-                range_C = range;
-                double x,y;
-                calculatePosition(x,y);
-                String positioning = "Found position - x: ";
-                positioning += x; positioning +=" y: ";
-                positioning += y;
-                Serial.println(positioning);
-                received_B = false;
-            } else {
-                received_B = false;
-            }
-        }
+        // } else if(recv_data[9] == 0x60) {
+        //     double range = static_cast<double>(DW1000NgUtils::bytesAsValue(&recv_data[10],2) / 1000.0);
+        //     String rangeReportString = "Range from: "; rangeReportString += recv_data[7];
+        //     rangeReportString += " = "; rangeReportString += range;
+        //     Serial.println(rangeReportString);
+        //     if(received_B == false && recv_data[7] == anchor_b[0] && recv_data[8] == anchor_b[1]) {
+        //         range_B = range;
+        //         received_B = true;
+        //     } else if(received_B == true && recv_data[7] == anchor_c[0] && recv_data[8] == anchor_c[1]){
+        //         range_C = range;
+        //         double x,y;
+        //         calculatePosition(x,y);
+        //         String positioning = "Found position - x: ";
+        //         positioning += x; positioning +=" y: ";
+        //         positioning += y;
+        //         Serial.println(positioning);
+        //         received_B = false;
+        //     } else {
+        //         received_B = false;
+        //     }
+        // }
     }
 
     

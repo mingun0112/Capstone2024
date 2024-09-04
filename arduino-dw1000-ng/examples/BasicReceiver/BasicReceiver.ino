@@ -88,7 +88,7 @@ device_configuration_t DEFAULT_CONFIG = {
 
 void setup() {
   // DEBUG monitoring
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println(F("### DW1000Ng-arduino-receiver-test ###"));
   // initialize the driver
   DW1000Ng::initializeNoInterrupt(PIN_SS);
