@@ -126,7 +126,7 @@ interrupt_configuration_t DEFAULT_INTERRUPT_CONFIG = {
 
 void setup() {
     // DEBUG monitoring
-    Serial.begin(115200);
+    Serial.begin(9600);
     delay(1000);
     Serial.println(F("### DW1000Ng-arduino-ranging-anchor ###"));
     // initialize the driver
@@ -136,7 +136,7 @@ void setup() {
     DW1000Ng::applyConfiguration(DEFAULT_CONFIG);
 	DW1000Ng::applyInterruptConfiguration(DEFAULT_INTERRUPT_CONFIG);
 
-    DW1000Ng::setDeviceAddress(1);
+    DW1000Ng::setDeviceAddress(3);
 	
     DW1000Ng::setAntennaDelay(16436);
     
@@ -223,6 +223,7 @@ void loop() {
     if (sentAck) {
         sentAck = false;
         byte msgId = data[0];
+        
         if (msgId == POLL_ACK) {
             timePollAckSent = DW1000Ng::getTransmitTimestamp();
             noteActivity();
@@ -233,6 +234,7 @@ void loop() {
         receivedAck = false;
         // get message and parse
         DW1000Ng::getReceivedData(data, LEN_DATA);
+        Serial.println(data[0]);
         byte msgId = data[0];
         if (msgId != expectedMsgId) {
             // unexpected message, start over again (except if already POLL)

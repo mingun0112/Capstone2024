@@ -44,9 +44,9 @@ double range_C;
 boolean received_B = false;
 
 byte target_eui[8];
-byte tag_shortAddress[] = {0x05, 0x00};
+byte tag_shortAddress[] = {0x05, 0x02};
 
-byte anchor_b[] = {0x02, 0x00};
+byte anchor_b[] = {0x05, 0x00};
 uint16_t next_anchor = 2;
 byte anchor_c[] = {0x03, 0x00};
 
@@ -134,22 +134,29 @@ void loop() {
         size_t recv_len = DW1000Ng::getReceivedDataLength();
         byte recv_data[recv_len];
         DW1000Ng::getReceivedData(recv_data, recv_len);
-        Serial.println(recv_data[0]);
+        Serial.print("Received data in HEX: ");
+for (size_t i = 0; i < recv_len; i++) {
+    if (recv_data[i] < 0x10) Serial.print("0"); // 한 자리 숫자의 경우 앞에 0 추가
+    Serial.print(recv_data[i], HEX);
+    Serial.print(" ");
+}
+Serial.println();
 
 
-        // if(recv_data[0] == BLINK) {
-        //     DW1000NgRTLS::transmitRangingInitiation(&recv_data[2], tag_shortAddress);
-        //     DW1000NgRTLS::waitForTransmission();
+        if(recv_data[0] == BLINK) {
+          Serial.println(recv_data[0]);
+            DW1000NgRTLS::transmitRangingInitiation(&recv_data[2], tag_shortAddress);
+            DW1000NgRTLS::waitForTransmission();
 
-        //     RangeAcceptResult result = DW1000NgRTLS::anchorRangeAccept(NextActivity::RANGING_CONFIRM, next_anchor);
-        //     if(!result.success) return;
-        //     range_self = result.range;
+            RangeAcceptResult result = DW1000NgRTLS::anchorRangeAccept(NextActivity::RANGING_CONFIRM, next_anchor);
+            if(!result.success) return;
+            range_self = result.range;
 
-        //     String rangeString = "Range: "; rangeString += range_self; rangeString += " m";
-        //     rangeString += "\t RX power: "; rangeString += DW1000Ng::getReceivePower(); rangeString += " dBm";
-        //     Serial.println(rangeString);
-
-        // } else if(recv_data[9] == 0x60) {
+            String rangeString = "Range: "; rangeString += range_self; rangeString += " m";
+            rangeString += "\t RX power: "; rangeString += DW1000Ng::getReceivePower(); rangeString += " dBm";
+            Serial.println(rangeString);
+        } 
+        // else if(recv_data[9] == 0x60) {
         //     double range = static_cast<double>(DW1000NgUtils::bytesAsValue(&recv_data[10],2) / 1000.0);
         //     String rangeReportString = "Range from: "; rangeReportString += recv_data[7];
         //     rangeReportString += " = "; rangeReportString += range;
