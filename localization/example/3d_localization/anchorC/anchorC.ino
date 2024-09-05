@@ -28,7 +28,7 @@ const uint8_t PIN_MOSI = 23;
 const uint8_t PIN_MISO = 19;
 
 // Extended Unique Identifier register. 64-bit device identifier. Register file: 0x01
-const char EUI[] = "AA:BB:CC:DD:EE:FF:00:02";
+const char EUI[] = "AA:BB:CC:DD:EE:FF:00:01";
 
 volatile uint32_t blink_rate = 200;
 
