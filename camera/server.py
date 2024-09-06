@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 import threading
 
-# socket에서 수신한 버퍼를 반환하는 함수
 def recvall(sock, count):
     buf = b''
     while count:
@@ -16,8 +15,7 @@ def recvall(sock, count):
 
 def handle_client(port):
     HOST = ''
-    
-    # TCP 소켓 생성
+
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((HOST, port))
     s.listen(10)
@@ -27,7 +25,7 @@ def handle_client(port):
     print(f'Connected by {addr} on port {port}')
 
     while True:
-        # client에서 받은 stringData의 크기 수신
+
         length = recvall(conn, 16)
         if length is None:
             break
@@ -36,7 +34,6 @@ def handle_client(port):
             break
         data = np.frombuffer(stringData, dtype='uint8')
 
-        # data를 디코딩하여 이미지를 복원
         frame = cv2.imdecode(data, cv2.IMREAD_COLOR)
         
         # 이미지 표시
@@ -45,7 +42,6 @@ def handle_client(port):
 
     conn.close()
 
-# 각각 다른 포트에서 수신하도록 스레드 생성
 ports = [8485, 8486]
 threads = []
 
@@ -54,7 +50,7 @@ for port in ports:
     t.start()
     threads.append(t)
 
-# 모든 스레드가 종료될 때까지 대기
+
 for t in threads:
     t.join()
 
