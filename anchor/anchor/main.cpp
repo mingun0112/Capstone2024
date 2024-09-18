@@ -11,17 +11,13 @@ namespace websocket = beast::websocket;
 namespace net = boost::asio;
 using tcp = boost::asio::ip::tcp;
 
-// Number of cameras to handle
-const int NUM_CAMERAS = 4;
+// 카메라를 전역으로 열어 유지
+cv::VideoCapture cap;
 
 // Capture frame using OpenCV
-cv::Mat capture_frame(int camera_index) {
-    /*std::string device = "/dev/video" + std::to_string(camera_index);
-    cv::VideoCapture cap(device);*/
-    cv::VideoCapture cap(0);
-
+cv::Mat capture_frame() {
     if (!cap.isOpened()) {
-        std::cerr << "Error opening camera: " << camera_index << std::endl;
+        std::cerr << "Error: Camera is not open!" << std::endl;
         return cv::Mat();
     }
 
@@ -31,18 +27,13 @@ cv::Mat capture_frame(int camera_index) {
 }
 
 // Function to send a frame over the WebSocket connection
-void send_frame(websocket::stream<tcp::socket>& ws, int camera_index, const cv::Mat& frame) {
+void send_frame(websocket::stream<tcp::socket>& ws, const cv::Mat& frame) {
     std::vector<uchar> buf;
     std::vector<int> params = { cv::IMWRITE_JPEG_QUALITY, 80 };
     cv::imencode(".jpg", frame, buf, params);
 
-    // Prepend camera index
-    std::vector<unsigned char> final_buf;
-    final_buf.push_back(static_cast<unsigned char>(camera_index));
-    final_buf.insert(final_buf.end(), buf.begin(), buf.end());
-
     // Send the frame data as a binary message
-    ws.write(net::buffer(final_buf));
+    ws.write(net::buffer(buf));
 }
 
 // Function to handle WebSocket sessions asynchronously
@@ -53,15 +44,12 @@ void handle_session(tcp::socket socket) {
         // Accept the WebSocket handshake
         ws.accept();
 
-        // WebSocket will continuously send frames from all cameras
         while (true) {
-            for (int i = 0; i < NUM_CAMERAS; ++i) {
-                cv::Mat frame = capture_frame(i);
-                if (!frame.empty()) {
-                    send_frame(ws, i, frame);
-                }
+            cv::Mat frame = capture_frame();
+            if (!frame.empty()) {
+                send_frame(ws, frame);
             }
-            // Sleep briefly between frame captures to avoid overloading
+
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
         }
     }
@@ -87,13 +75,20 @@ void run_server(net::io_context& ioc, tcp::endpoint endpoint) {
 
 int main() {
     try {
+        // Initialize the camera (0번 카메라 열기)
+        cap.open(0);
+        if (!cap.isOpened()) {
+            std::cerr << "Error: Cannot open camera!" << std::endl;
+            return -1;
+        }
+
         // Initialize the Boost Asio context
         net::io_context ioc;
 
         // Define the endpoint (IP address and port)
-        tcp::endpoint endpoint(tcp::v4(), 10000);
+        tcp::endpoint endpoint(tcp::v4(), 10001);
 
-        std::cout << "WebSocket server listening on port 10000..." << std::endl;
+        std::cout << "WebSocket server listening on port 10001..." << std::endl;
 
         // Run the server
         run_server(ioc, endpoint);

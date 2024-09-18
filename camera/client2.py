@@ -7,9 +7,12 @@ import numpy as np
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 ## server ip, port
 s.connect(('localhost', 8486))
+ 
+## webcam 이미지 capture
+cam = cv2.VideoCapture(0)
 
-cam = cv2.VideoCapture(1)
-
+ 
+## 0~100에서 90의 이미지 품질로 설정 (default = 95)
 encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
  
 while True:
